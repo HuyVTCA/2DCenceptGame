@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - DreamCraft Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background động */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.3) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 80%, rgba(255, 77, 148, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 60%, rgba(44, 44, 44, 0.4) 0%, transparent 50%);
+            animation: backgroundMove 15s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-20px, -20px) scale(1.1); }
+            50% { transform: translate(20px, 20px) scale(0.9); }
+            75% { transform: translate(-10px, 10px) scale(1.05); }
+        }
+
+        .checkout-container {
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 77, 148, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .payment-method {
+            background: rgba(60, 60, 60, 0.8);
+            border: 2px solid rgba(255, 77, 148, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-method:hover {
+            border-color: rgba(255, 77, 148, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 77, 148, 0.2);
+        }
+
+        .payment-method.selected {
+            border-color: #ff4d94;
+            background: rgba(255, 77, 148, 0.1);
+        }
+
+        .payment-method::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 77, 148, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .payment-method:hover::before {
+            left: 100%;
+        }
+
+        .btn-pay {
+            background: linear-gradient(135deg, #ff4d94, #e03e82);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 77, 148, 0.4);
+        }
+
+        .btn-pay:active {
+            transform: scale(0.98);
+        }
+
+        /* Hiệu ứng loading */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hiệu ứng Apple Pay */
+        .apple-pay-effect {
+            background: linear-gradient(135deg, #000000, #333333);
+            color: white;
+        }
+
+        .apple-pay-effect:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Hiệu ứng Google Pay */
+        .google-pay-effect {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+        }
+
+        /* Hiệu ứng PayPal */
+        .paypal-effect {
+            background: linear-gradient(135deg, #0070ba, #003087);
+        }
+
+        /* Hiệu ứng Visa */
+        .visa-effect {
+            background: linear-gradient(135deg, #1a1f71, #2e4bc6);
+        }
+
+        /* Hiệu ứng MasterCard */
+        .mastercard-effect {
+            background: linear-gradient(135deg, #eb001b, #ff5f00);
+        }
+
+        /* Hiệu ứng Banking */
+        .banking-effect {
+            background: linear-gradient(135deg, #2d5aa0, #5b8ce8);
+        }
+
+        /* Animation cho success */
+        .success-animation {
+            animation: successPulse 0.6s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Hiệu ứng countdown */
+        .countdown {
+            background: rgba(255, 77, 148, 0.1);
+            border: 1px solid rgba(255, 77, 148, 0.3);
+            animation: countdownBlink 1s infinite;
+        }
+
+        @keyframes countdownBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 77, 148, 0.3);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Balance animation */
+        .balance-decrease {
+            animation: balanceDecrease 1s ease-in-out;
+        }
+
+        @keyframes balanceDecrease {
+            0% { transform: scale(1); color: #ffffff; }
+            50% { transform: scale(1.1); color: #ff4d94; }
+            100% { transform: scale(1); color: #ffffff; }
+        }
+
+        .touch-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .touch-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 77, 148, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .touch-effect:active::after {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Thanh điều hướng -->
+    <nav class="fixed top-0 w-full bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg py-4 px-6 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-pink-400 hover:text-pink-600 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Quay lại
+            </a>
+            <h1 class="text-xl font-bold text-white">Thanh toán</h1>
+            <div class="w-20"></div>
+        </div>
+    </nav>
+
+    <!-- Container chính -->
+    <div class="checkout-container max-w-4xl w-full mt-20 p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Thông tin gói -->
+            <div class="space-y-6">
+                <div class="text-center lg:text-left">
+                    <h2 id="plan-title" class="text-3xl font-bold text-pink-400 mb-2">Gói Premium</h2>
+                    <p class="text-gray-300">Truy cập toàn bộ tính năng Starbloom</p>
+                </div>
+
+                <!-- Tùy chọn gói -->
+                <div class="bg-gray-800 bg-opacity-50 rounded-lg p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-white mb-4">Chọn thời hạn:</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between p-3 bg-gray-700 bg-opacity-50 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <input type="radio" name="plan-duration" value="yearly" checked class="text-pink-400">
+                                <div>
+                                    <div class="text-white font-semibold">Gói 1 năm</div>
+                                    <div class="text-green-400 text-sm">Tiết kiệm 2 tháng!</div>
+                                </div>
+                            </div>
+                            <span id="yearly-price" class="text-white font-bold">$99.99</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 bg-gray-700 bg-opacity-50 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <input type="radio" name="plan-duration" value="monthly" class="text-pink-400">
+                                <div>
+                                    <div class="text-white font-semibold">Gói 1 tháng</div>
+                                    <div class="text-gray-400 text-sm">Thanh toán hàng tháng</div>
+                                </div>
+                            </div>
+                            <span id="monthly-price" class="text-white font-bold">$9.99</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Chi tiết gói -->
+                <div class="bg-gray-800 bg-opacity-50 rounded-lg p-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span id="plan-detail" class="text-gray-300">Gói Premium (1 năm)</span>
+                        <span id="original-price" class="text-white font-semibold">$99.99</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Giảm giá (20%)</span>
+                        <span id="discount-amount" class="text-green-400 font-semibold">-$20.00</span>
+                    </div>
+                    <div class="border-t border-gray-600 pt-4">
+                        <div class="flex justify-between items-center text-lg">
+                            <span class="text-white font-bold">Tổng cộng:</span>
+                            <span id="final-price" class="text-pink-400 font-bold">$79.99</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ưu đãi đặc biệt -->
+                <div class="countdown rounded-lg p-4 text-center">
+                    <div class="text-pink-400 font-semibold mb-2">🎉 Ưu đãi đặc biệt!</div>
+                    <div class="text-sm text-gray-300">Giảm 20% kết thúc sau: <span id="countdown-timer" class="text-pink-400 font-bold">05:23</span></div>
+                </div>
+
+                <!-- Thông tin tài khoản giả lập -->
+                <div class="bg-gray-800 bg-opacity-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-white mb-4">Tài khoản của bạn</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Số dư ví:</span>
+                            <span id="wallet-balance" class="text-green-400 font-semibold">$125.50</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Điểm thưởng:</span>
+                            <span class="text-yellow-400 font-semibold">2,340 điểm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form thanh toán -->
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-white mb-6">Chọn phương thức thanh toán</h3>
+
+                <!-- Phương thức thanh toán -->
+                <div class="space-y-4">
+                    <!-- Apple Pay -->
+                    <div class="payment-method apple-pay-effect rounded-lg p-4 flex items-center justify-between touch-effect" onclick="selectPayment('apple-pay')">
+                        <div class="flex items-center space-x-4">
+                            <i class="fab fa-apple text-2xl"></i>
+                            <div>
+                                <div class="font-semibold">Apple Pay</div>
+                                <div class="text-sm text-gray-300">Thanh toán nhanh và bảo mật</div>
+                            </div>
+                        </div>
+                        <input type="radio" name="payment" value="apple-pay" class="text-pink-400">
+                    </div>
+
+                    <!-- Google Pay -->
+                    <div class="payment-method google-pay-effect rounded-lg p-4 flex items-center justify-between touch-effect" onclick="selectPayment('google-pay')">
+                        <div class="flex items-center space-x-4">
+                            <i class="fab fa-google-pay text-2xl"></i>
+                            <div>
+                                <div class="font-semibold">Google Pay</div>
+                                <div class="text-sm text-gray-300">Thanh toán bằng Google</div>
+                            </div>
+                        </div>
+                        <input type="radio" name="payment" value="google-pay" class="text-pink-400">
+                    </div>
+
+                    <!-- PayPal -->
+                    <div class="payment-method paypal-effect rounded-lg p-4 flex items-center justify-between touch-effect" onclick="selectPayment('paypal')">
+                        <div class="flex items-center space-x-4">
+                            <i class="fab fa-paypal text-2xl"></i>
+                            <div>
+                                <div class="font-semibold">PayPal</div>
+                                <div class="text-sm text-gray-300">Bảo mật với PayPal</div>
+                            </div>
+                        </div>
+                        <input type="radio" name="payment" value="paypal" class="text-pink-400">
+                    </div>
+
+                    <!-- Thẻ tín dụng -->
+                    <div class="payment-method visa-effect rounded-lg p-4 flex items-center justify-between touch-effect" onclick="selectPayment('credit-card')">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-credit-card text-2xl"></i>
+                            <div>
+                                <div class="font-semibold">Thẻ tín dụng/ghi nợ</div>
+                                <div class="text-sm text-gray-300">Visa, MasterCard, American Express</div>
+                            </div>
+                        </div>
+                        <input type="radio" name="payment" value="credit-card" class="text-pink-400">
+                    </div>
+
+                    <!-- Chuyển khoản ngân hàng -->
+                    <div class="payment-method banking-effect rounded-lg p-4 flex items-center justify-between touch-effect" onclick="selectPayment('banking')">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-university text-2xl"></i>
+                            <div>
+                                <div class="font-semibold">Chuyển khoản ngân hàng</div>
+                                <div class="text-sm text-gray-300">Vietcombank, Techcombank, BIDV</div>
+                            </div>
+                        </div>
+                        <input type="radio" name="payment" value="banking" class="text-pink-400">
+                    </div>
+
+                    <!-- Ví điện tử -->
+                    <div class="payment-method rounded-lg p-4 flex items-center justify-between touch-effect" onclick="selectPayment('wallet')" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-wallet text-2xl"></i>
+                            <div>
+                                <div class="font-semibold">Ví DreamCraft</div>
+                                <div class="text-sm text-gray-300">Sử dụng số dư: <span id="wallet-display">$125.50</span></div>
+                            </div>
+                        </div>
+                        <input type="radio" name="payment" value="wallet" class="text-pink-400">
+                    </div>
+                </div>
+
+                <!-- Nút thanh toán -->
+                <button id="pay-button" class="btn-pay w-full py-4 rounded-lg text-white font-bold text-lg touch-effect" onclick="processPayment()">
+                    <span id="pay-text">Chọn phương thức thanh toán</span>
+                    <div class="loading-spinner mx-auto"></div>
+                </button>
+
+                <!-- Bảo mật -->
+                <div class="flex items-center justify-center space-x-4 text-sm text-gray-400">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Thanh toán được bảo mật bằng mã hóa SSL 256-bit</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal thành công -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content text-center">
+            <div class="text-6xl text-green-400 mb-4">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-4">Thanh toán thành công!</h3>
+            <p class="text-gray-300 mb-6">Chúc mừng! Bạn đã kích hoạt thành công gói Premium. Hãy khám phá tất cả tính năng mới!</p>
+            <div class="space-y-4">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="text-pink-400 font-semibold mb-2">Thông tin giao dịch:</div>
+                    <div class="text-sm text-gray-300 space-y-1">
+                        <div>Mã giao dịch: <span class="text-white">#DRC-2025-001234</span></div>
+                        <div>Thời gian: <span class="text-white" id="transaction-time"></span></div>
+                        <div>Số tiền: <span id="transaction-amount" class="text-green-400">$79.99</span></div>
+                    </div>
+                </div>
+                <button onclick="closeSuccessModal()" class="btn-pay px-8 py-3 rounded-lg text-white font-semibold">
+                    Tiếp tục
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xử lý thanh toán -->
+    <div id="processing-modal" class="modal">
+        <div class="modal-content text-center">
+            <div class="text-6xl text-pink-400 mb-4">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-4">Đang xử lý thanh toán...</h3>
+            <p class="text-gray-300 mb-6">Vui lòng đợi trong giây lát, chúng tôi đang xử lý giao dịch của bạn.</p>
+            <div class="bg-gray-800 rounded-lg p-4">
+                <div class="text-sm text-gray-300 space-y-2">
+                    <div id="processing-step" class="text-pink-400">Đang xác thực thông tin...</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="progress-bar" class="bg-pink-400 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPayment = null;
+        let countdownSeconds = 323; // 5:23
+        let currentPlan = null;
+        let currentPrice = 0;
+        let isYearly = true;
+
+        // Load thông tin gói từ localStorage
+        function loadPlanData() {
+            const planData = localStorage.getItem('selectedPlan');
+            if (planData) {
+                currentPlan = JSON.parse(planData);
+                updatePlanDisplay();
+            }
+        }
+
+        // Cập nhật hiển thị thông tin gói
+        function updatePlanDisplay() {
+            if (!currentPlan) return;
+
+            document.getElementById('plan-title').textContent = currentPlan.name;
+            document.getElementById('yearly-price').textContent = `$${currentPlan.yearlyPrice}`;
+            document.getElementById('monthly-price').textContent = `$${currentPlan.monthlyPrice}`;
+            
+            calculatePrice();
+        }
+
+        // Tính toán giá
+        function calculatePrice() {
+            if (!currentPlan) return;
+
+            const basePrice = isYearly ? currentPlan.yearlyPrice : currentPlan.monthlyPrice;
+            const discountPercent = isYearly ? 20 : 10; // Giảm giá nhiều hơn cho gói năm
+            const discountAmount = (basePrice * discountPercent) / 100;
+            currentPrice = basePrice - discountAmount;
+
+            // Cập nhật hiển thị
+            const planType = isYearly ? '1 năm' : '1 tháng';
+            document.getElementById('plan-detail').textContent = `${currentPlan.name} (${planType})`;
+            document.getElementById('original-price').textContent = `$${basePrice.toFixed(2)}`;
+            document.getElementById('discount-amount').textContent = `-$${discountAmount.toFixed(2)}`;
+            document.getElementById('final-price').textContent = `$${currentPrice.toFixed(2)}`;
+
+            // Cập nhật nút thanh toán ví
+            updateWalletPaymentButton();
+        }
+
+        // Cập nhật nút thanh toán ví
+        function updateWalletPaymentButton() {
+            const walletDisplay = document.getElementById('wallet-display');
+            const payText = document.getElementById('pay-text');
+            
+            if (selectedPayment === 'wallet') {
+                payText.textContent = `Thanh toán từ ví ($${currentPrice.toFixed(2)})`;
+            }
+        }
+
+        // Xử lý thay đổi thời hạn gói
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'plan-duration') {
+                isYearly = e.target.value === 'yearly';
+                calculatePrice();
+                if (selectedPayment) {
+                    updatePaymentButtonText();
+                }
+            }
+        });
+
+        // Cập nhật text nút thanh toán
+        function updatePaymentButtonText() {
+            const payText = document.getElementById('pay-text');
+            const methodNames = {
+                'apple-pay': 'Thanh toán với Apple Pay',
+                'google-pay': 'Thanh toán với Google Pay',
+                'paypal': 'Thanh toán với PayPal',
+                'credit-card': 'Thanh toán bằng thẻ',
+                'banking': 'Chuyển khoản ngân hàng',
+                'wallet': `Thanh toán từ ví ($${currentPrice.toFixed(2)})`
+            };
+            
+            payText.textContent = methodNames[selectedPayment];
+        }
+
+        // Countdown timer
+        function updateCountdown() {
+            const minutes = Math.floor(countdownSeconds / 60);
+            const seconds = countdownSeconds % 60;
+            document.getElementById('countdown-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (countdownSeconds > 0) {
+                countdownSeconds--;
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+        updateCountdown();
+
+        // Chọn phương thức thanh toán
+        function selectPayment(method) {
+            selectedPayment = method;
+            
+            // Remove selected class from all payment methods
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked method
+            event.currentTarget.classList.add('selected');
+            
+            // Check radio button
+            document.querySelector(`input[value="${method}"]`).checked = true;
+            
+            // Update pay button
+            const payButton = document.getElementById('pay-button');
+            updatePaymentButtonText();
+            payButton.disabled = false;
+            payButton.style.opacity = '1';
+        }
+
+        // Xử lý thanh toán
+        function processPayment() {
+            if (!selectedPayment) {
+                alert('Vui lòng chọn phương thức thanh toán!');
+                return;
+            }
+
+            // Hiển thị modal xử lý
+            showProcessingModal();
+        }
+
+        function showProcessingModal() {
+            const modal = document.getElementById('processing-modal');
+            modal.classList.add('show');
+            
+            let progress = 0;
+            const progressBar = document.getElementById('progress-bar');
+            const processingStep = document.getElementById('processing-step');
+            
+            const steps = [
+                'Đang xác thực thông tin...',
+                'Đang kết nối với ngân hàng...',
+                'Đang xử lý giao dịch...',
+                'Hoàn tất thanh toán...'
+            ];
+            
+            let stepIndex = 0;
+            
+            const progressInterval = setInterval(() => {
+                progress += 25;
+                progressBar.style.width = progress + '%';
+                
+                if (stepIndex < steps.length) {
+                    processingStep.textContent = steps[stepIndex];
+                    stepIndex++;
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    setTimeout(() => {
+                        modal.classList.remove('show');
+                        
+                        // Hiệu ứng trừ tiền nếu dùng ví
+                        if (selectedPayment === 'wallet') {
+                            updateWalletBalance();
+                        }
+                        
+                        showSuccessModal();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        function updateWalletBalance() {
+            const balanceElement = document.getElementById('wallet-balance');
+            const currentBalance = 125.50;
+            const newBalance = currentBalance - currentPrice;
+            
+            balanceElement.classList.add('balance-decrease');
+            
+            setTimeout(() => {
+                balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+                balanceElement.classList.remove('balance-decrease');
+            }, 500);
+        }
+
+        function showSuccessModal() {
+            const modal = document.getElementById('success-modal');
+            const transactionTime = document.getElementById('transaction-time');
+            const transactionAmount = document.getElementById('transaction-amount');
+            
+            // Hiển thị thời gian hiện tại
+            const now = new Date();
+            transactionTime.textContent = now.toLocaleString('vi-VN');
+            
+            // Cập nhật số tiền trong modal success
+            transactionAmount.textContent = `$${currentPrice.toFixed(2)}`;
+            
+            modal.classList.add('show');
+            
+            // Hiệu ứng confetti (giả lập)
+            createConfetti();
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('success-modal');
+            modal.classList.remove('show');
+            
+            // Chuyển về trang chủ
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 300);
+        }
+
+        function createConfetti() {
+            // Tạo hiệu ứng confetti đơn giản
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = ['#ff4d94', '#4b0082', '#00ff00', '#ffff00'][Math.floor(Math.random() * 4)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.borderRadius = '50%';
+                
+                document.body.appendChild(confetti);
+                
+                // Animation rơi
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: 'translateY(100vh) rotate(360deg)', opacity: 0 }
+                ], {
+                    duration: 3000,
+                    easing: 'ease-out'
+                });
+                
+                animation.onfinish = () => {
+                    confetti.remove();
+                };
+            }
+        }
+
+        // Hiệu ứng hover cho payment methods
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.02)';
+            });
+            
+            method.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Disable pay button initially
+        document.getElementById('pay-button').style.opacity = '0.6';
+        document.getElementById('pay-button').disabled = true;
+
+        // Load plan data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPlanData();
+        });
+    </script>
+</body>
+</html>

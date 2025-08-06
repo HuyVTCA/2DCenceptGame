@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân - DreamCraft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background động */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.3) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 80%, rgba(255, 77, 148, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 60%, rgba(44, 44, 44, 0.4) 0%, transparent 50%);
+            animation: backgroundMove 15s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-20px, -20px) scale(1.1); }
+            50% { transform: translate(20px, 20px) scale(0.9); }
+            75% { transform: translate(-10px, 10px) scale(1.05); }
+        }
+
+        .profile-container {
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 77, 148, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card {
+            background: rgba(60, 60, 60, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 77, 148, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255, 77, 148, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .plan-badge {
+            background: linear-gradient(135deg, #ff4d94, #e03e82);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 10px rgba(255, 77, 148, 0.5); }
+            to { box-shadow: 0 0 20px rgba(255, 77, 148, 0.8); }
+        }
+
+        .achievement-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #ff4d94;
+            color: #ff4d94;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .transaction-item {
+            background: rgba(60, 60, 60, 0.6);
+            border-left: 4px solid #ff4d94;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: rgba(60, 60, 60, 0.8);
+            transform: translateX(5px);
+        }
+
+        .benefit-item {
+            background: rgba(60, 60, 60, 0.6);
+            border: 1px solid rgba(255, 77, 148, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            border-color: rgba(255, 77, 148, 0.5);
+            transform: scale(1.02);
+        }
+
+        .level-progress {
+            background: linear-gradient(90deg, #ff4d94, #e03e82);
+            border-radius: 10px;
+            height: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg py-4 px-6 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-pink-400 hover:text-pink-600 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Quay lại
+            </a>
+            <h1 class="text-xl font-bold text-white">Thông tin cá nhân</h1>
+            <div class="w-20"></div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20 px-4 pb-8">
+        <div class="container mx-auto max-w-6xl">
+            <!-- Profile Header -->
+            <div class="profile-container p-8 mb-8">
+                <div class="flex flex-col lg:flex-row items-center lg:items-start space-y-6 lg:space-y-0 lg:space-x-8">
+                    <!-- Avatar -->
+                    <div class="relative">
+                        <img src="Data/avatar.png" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-pink-400" 
+                             onerror="this.src='https://via.placeholder.com/128x128/ff4d94/ffffff?text=USER'">
+                        <div class="absolute -bottom-2 -right-2 plan-badge text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            Premium
+                        </div>
+                    </div>
+                    
+                    <!-- User Info -->
+                    <div class="flex-1 text-center lg:text-left">
+                        <h2 class="text-3xl font-bold text-white mb-2">Hugo Wishpax</h2>
+                        <p class="text-gray-300 mb-4">DreamCraft Explorer • Thành viên từ 2024</p>
+                        
+                        <!-- Level Progress -->
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-white font-semibold">Cấp độ 28</span>
+                                <span class="text-gray-300">2,340 / 3,000 XP</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="level-progress w-4/5 h-3"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Stats -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="stat-card rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-pink-400">156</div>
+                                <div class="text-sm text-gray-300">Giờ chơi</div>
+                            </div>
+                            <div class="stat-card rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-yellow-400">23</div>
+                                <div class="text-sm text-gray-300">Thành tích</div>
+                            </div>
+                            <div class="stat-card rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-green-400">$45.50</div>
+                                <div class="text-sm text-gray-300">Số dư ví</div>
+                            </div>
+                            <div class="stat-card rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-blue-400">8</div>
+                                <div class="text-sm text-gray-300">Bạn bè</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Achievements -->
+                    <div class="flex space-x-2">
+                        <div class="achievement-badge" title="Chiến binh Cầu Vồng">
+                            🌈
+                        </div>
+                        <div class="achievement-badge" title="Chủ nhân Kẹo Ngọt">
+                            🍭
+                        </div>
+                        <div class="achievement-badge" title="Khám phá Thiên Hà">
+                            ⭐
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="profile-container p-8">
+                <div class="flex space-x-8 mb-8 border-b border-gray-600">
+                    <button class="tab-button active py-2 px-4 font-semibold" onclick="switchTab('plans')">
+                        Gói thành viên
+                    </button>
+                    <button class="tab-button py-2 px-4 font-semibold" onclick="switchTab('history')">
+                        Lịch sử mua hàng
+                    </button>
+                    <button class="tab-button py-2 px-4 font-semibold" onclick="switchTab('benefits')">
+                        Quyền lợi
+                    </button>
+                    <button class="tab-button py-2 px-4 font-semibold" onclick="switchTab('settings')">
+                        Cài đặt
+                    </button>
+                </div>
+
+                <!-- Tab Content: Plans -->
+                <div id="plans-tab" class="tab-content active">
+                    <h3 class="text-2xl font-bold text-white mb-6">Gói thành viên hiện tại</h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Current Plan -->
+                        <div class="stat-card rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-xl font-bold text-pink-400">Gói Premium</h4>
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">Đang hoạt động</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">Ngày kích hoạt:</span>
+                                    <span class="text-white">15/01/2025</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">Ngày hết hạn:</span>
+                                    <span class="text-white">15/01/2026</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">Tự động gia hạn:</span>
+                                    <span class="text-green-400">Đã bật</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">Giá trị gói:</span>
+                                    <span class="text-white font-semibold">$79.99/năm</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg transition-colors">
+                                Quản lý gói
+                            </button>
+                        </div>
+
+                        <!-- Plan Benefits -->
+                        <div class="stat-card rounded-lg p-6">
+                            <h4 class="text-xl font-bold text-white mb-4">Tính năng đã mở khóa</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-green-400 mr-3"></i>
+                                    <span class="text-gray-300">Truy cập tất cả vùng đất</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-green-400 mr-3"></i>
+                                    <span class="text-gray-300">Tăng 50% tài nguyên</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-green-400 mr-3"></i>
+                                    <span class="text-gray-300">Skin độc quyền (12 bộ)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-green-400 mr-3"></i>
+                                    <span class="text-gray-300">Thú cưng đặc biệt (8 con)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-green-400 mr-3"></i>
+                                    <span class="text-gray-300">Không quảng cáo</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-green-400 mr-3"></i>
+                                    <span class="text-gray-300">Truy cập sớm nội dung mới</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Usage Statistics -->
+                    <div class="stat-card rounded-lg p-6">
+                        <h4 class="text-xl font-bold text-white mb-4">Thống kê sử dụng tháng này</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <div class="text-3xl font-bold text-pink-400 mb-2">42h</div>
+                                <div class="text-gray-300">Thời gian chơi</div>
+                                <div class="text-sm text-green-400">+15% so với tháng trước</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-yellow-400 mb-2">1,280</div>
+                                <div class="text-gray-300">Tinh thể thu thập</div>
+                                <div class="text-sm text-green-400">+23% nhờ Premium</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-blue-400 mb-2">15</div>
+                                <div class="text-gray-300">Nhiệm vụ hoàn thành</div>
+                                <div class="text-sm text-green-400">Đạt mục tiêu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: History -->
+                <div id="history-tab" class="tab-content">
+                    <h3 class="text-2xl font-bold text-white mb-6">Lịch sử giao dịch</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="transaction-item rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="text-white font-semibold">Gói Premium (1 năm)</h4>
+                                    <p class="text-gray-300 text-sm">15/01/2025 • Apple Pay</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white font-semibold">$79.99</div>
+                                    <div class="text-green-400 text-sm">Thành công</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="text-white font-semibold">Áo DreamCraft</h4>
+                                    <p class="text-gray-300 text-sm">12/01/2025 • Ví DreamCraft</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white font-semibold">$24.99</div>
+                                    <div class="text-blue-400 text-sm">Đang giao</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="text-white font-semibold">Gối bông DreamCraft</h4>
+                                    <p class="text-gray-300 text-sm">08/01/2025 • PayPal</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white font-semibold">$29.99</div>
+                                    <div class="text-green-400 text-sm">Đã giao</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="text-white font-semibold">Nạp tiền vào ví</h4>
+                                    <p class="text-gray-300 text-sm">05/01/2025 • Visa ****1234</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white font-semibold">+$50.00</div>
+                                    <div class="text-green-400 text-sm">Thành công</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="text-white font-semibold">Mô hình Bút Chì Kỳ Diệu</h4>
+                                    <p class="text-gray-300 text-sm">02/01/2025 • Google Pay</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white font-semibold">$39.99</div>
+                                    <div class="text-green-400 text-sm">Đã giao</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <button class="text-pink-400 hover:text-pink-600 transition-colors">
+                            Xem tất cả giao dịch <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Benefits -->
+                <div id="benefits-tab" class="tab-content">
+                    <h3 class="text-2xl font-bold text-white mb-6">Quyền lợi thành viên Premium</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">🌈</div>
+                            <h4 class="text-white font-semibold mb-2">Vùng đất độc quyền</h4>
+                            <p class="text-gray-300 text-sm">Truy cập Rainbow Realm, Candy Realm, Nebula Realm với nội dung đặc biệt chỉ dành cho Premium</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">💎</div>
+                            <h4 class="text-white font-semibold mb-2">Tài nguyên x1.5</h4>
+                            <p class="text-gray-300 text-sm">Nhận thêm 50% tinh thể ánh sáng, kẹo ngọt và các tài nguyên quý hiếm khác</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">👑</div>
+                            <h4 class="text-white font-semibold mb-2">Skin VIP</h4>
+                            <p class="text-gray-300 text-sm">Bộ sưu tập 25+ skin độc quyền bao gồm Công chúa ánh sáng, Hiệp sĩ cầu vồng</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">🦄</div>
+                            <h4 class="text-white font-semibold mb-2">Thú cưng huyền thoại</h4>
+                            <p class="text-gray-300 text-sm">Kỳ lân ánh kim, Chim ánh sao, Rồng thiên hà và nhiều thú cưng hiếm khác</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">🚫</div>
+                            <h4 class="text-white font-semibold mb-2">Không quảng cáo</h4>
+                            <p class="text-gray-300 text-sm">Trải nghiệm chơi game mượt mà hoàn toàn không bị gián đoạn bởi quảng cáo</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">⚡</div>
+                            <h4 class="text-white font-semibold mb-2">Truy cập sớm</h4>
+                            <p class="text-gray-300 text-sm">Chơi thử các tính năng mới trước người khác 7-14 ngày và góp ý phản hồi</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">🎭</div>
+                            <h4 class="text-white font-semibold mb-2">Sự kiện độc quyền</h4>
+                            <p class="text-gray-300 text-sm">Tham gia các sự kiện, mini-game và thử thách chỉ dành riêng cho thành viên Premium</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">💬</div>
+                            <h4 class="text-white font-semibold mb-2">Hỗ trợ ưu tiên</h4>
+                            <p class="text-gray-300 text-sm">Được hỗ trợ kỹ thuật ưu tiên qua Discord và email với thời gian phản hồi < 2h</p>
+                        </div>
+
+                        <div class="benefit-item rounded-lg p-6 text-center">
+                            <div class="text-4xl mb-4">🏆</div>
+                            <h4 class="text-white font-semibold mb-2">Huy hiệu đặc biệt</h4>
+                            <p class="text-gray-300 text-sm">Badge Premium hiển thị trên profile và trong game, thể hiện đẳng cấp của bạn</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Settings -->
+                <div id="settings-tab" class="tab-content">
+                    <h3 class="text-2xl font-bold text-white mb-6">Cài đặt tài khoản</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Account Info -->
+                        <div class="stat-card rounded-lg p-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Thông tin cơ bản</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Tên hiển thị</label>
+                                    <input type="text" value="Nguyễn Minh Khôi" class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-pink-400">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Email</label>
+                                    <input type="email" value="khoi.nguyen@example.com" class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-pink-400">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Settings -->
+                        <div class="stat-card rounded-lg p-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Quyền riêng tư</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">Hiển thị thống kê game</span>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">Cho phép bạn bè xem profile</span>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">Nhận email thông báo</span>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscription Management -->
+                        <div class="stat-card rounded-lg p-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Quản lý đăng ký</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="text-white font-semibold">Tự động gia hạn Premium</div>
+                                        <div class="text-gray-300 text-sm">Gia hạn vào 15/01/2026</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <button class="text-red-400 hover:text-red-600 transition-colors">
+                                    Hủy đăng ký Premium
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Security -->
+                        <div class="stat-card rounded-lg p-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Bảo mật</h4>
+                            <div class="space-y-4">
+                                <button class="w-full text-left bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg transition-colors">
+                                    <div class="text-white font-semibold">Đổi mật khẩu</div>
+                                    <div class="text-gray-300 text-sm">Cập nhật lần cuối: 15/01/2025</div>
+                                </button>
+                                <button class="w-full text-left bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg transition-colors">
+                                    <div class="text-white font-semibold">Xác thực 2 bước</div>
+                                    <div class="text-green-400 text-sm">Đã kích hoạt</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end space-x-4">
+                        <button class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            Hủy
+                        </button>
+                        <button class="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg transition-colors">
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Remove active class from all tabs and buttons
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Add active class to selected tab and button
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+
+    <style>
+        /* Switch styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff4d94;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</body>
+</html>

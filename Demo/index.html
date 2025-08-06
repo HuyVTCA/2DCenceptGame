@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa hàng chính thức DreamCraft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: #1a1a1a; /* Màu nền đen */
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background động loang đen */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.3) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 80%, rgba(255, 77, 148, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 60%, rgba(44, 44, 44, 0.4) 0%, transparent 50%);
+            animation: backgroundMove 15s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-20px, -20px) scale(1.1); }
+            50% { transform: translate(20px, 20px) scale(0.9); }
+            75% { transform: translate(-10px, 10px) scale(1.05); }
+        }
+        .header-bg {
+            background-image: url('https://via.placeholder.com/1200x400/2c2c2c/ffffff?text=Starbloom+Banner');
+            background-size: cover;
+            background-position: center;
+        }
+        .product-card, .plan-card {
+            background: rgba(44, 44, 44, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 77, 148, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card::before, .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 77, 148, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .product-card:hover::before, .plan-card:hover::before {
+            left: 100%;
+        }
+        
+        .product-card:hover, .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(255, 77, 148, 0.2);
+            border-color: rgba(255, 77, 148, 0.3);
+        }
+        .btn-primary {
+            background: #ff4d94; /* Hồng phấn nổi bật */
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #e03e82;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 77, 148, 0.4);
+        }
+        .btn-login {
+            background: #4b0082; /* Màu chàm cho nút đăng nhập */
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover {
+            background: #3a0066;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 0, 130, 0.4);
+        }
+        .logo-placeholder {
+            max-width: 200px; /* Tăng kích thước logo */
+            height: auto;
+        }
+        .nav-menu {
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-menu a {
+            font-size: 1.1rem;
+            font-weight: 600;
+            position: relative;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-menu a:hover {
+            background: rgba(255, 77, 148, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #ff4d94;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-menu a:hover::after {
+            width: 80%;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            overflow-x: hidden; /* Ngăn cuộn ngang */
+        }
+        
+        /* Hiệu ứng chạm */
+        .touch-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .touch-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 77, 148, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .touch-effect:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Cart styles */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 77, 148, 0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .cart-overlay.show {
+            display: block;
+        }
+
+        .cart-item {
+            background: rgba(60, 60, 60, 0.8);
+            border: 1px solid rgba(255, 77, 148, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            border-color: rgba(255, 77, 148, 0.3);
+        }
+
+        /* Floating Cart Button */
+        .floating-cart {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff4d94, #e03e82);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 77, 148, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 35px rgba(255, 77, 148, 0.6);
+        }
+
+        .floating-cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff0066;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 10px 25px rgba(255, 77, 148, 0.4); }
+            50% { box-shadow: 0 10px 25px rgba(255, 77, 148, 0.8); }
+            100% { box-shadow: 0 10px 25px rgba(255, 77, 148, 0.4); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <nav class="nav-menu fixed top-0 w-full py-4 px-6 flex justify-between items-center shadow-lg z-50">
+        <div class="flex items-center">
+            <img src="Data/logo.png" alt="Logo DreamCraft" class="logo-placeholder h-12 w-auto">
+        </div>
+        <div class="flex space-x-6">
+            <a href="#goi-thanh-vien" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">Gói thành viên</a>
+            <a href="#san-pham" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">Sản phẩm</a>
+            <a href="#su-kien" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">Sự kiện</a>
+        </div>
+        <div class="flex items-center space-x-4">
+            <!-- Avatar -->
+            <div class="relative">
+                <button onclick="goToProfile()" class="touch-effect">
+                    <img src="Data/avatar.png" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-pink-400 hover:border-pink-600 transition-colors duration-300" onerror="this.src='https://via.placeholder.com/40x40/ff4d94/ffffff?text=U'">
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tiêu đề -->
+    <header class="header-bg pt-24 pb-12 text-center">
+        <h1 class="text-4xl font-bold drop-shadow-lg">Cửa hàng chính thức DreamCraft</h1>
+        <p class="mt-2 text-lg text-gray-300">Mang phép màu của Starbloom đến với bạn!</p>
+    </header>
+
+    <!-- Nội dung chính -->
+    <main class="container mx-auto py-8 px-4 flex-grow">
+        <!-- Phần Gói thành viên -->
+        <section id="goi-thanh-vien" class="mb-12">
+            <h2 class="text-3xl font-semibold text-pink-400 text-center mb-6">Gói thành viên</h2>
+            <p class="text-base text-gray-300 text-center mb-8">Tham gia hành trình Starbloom với các gói thành viên phù hợp!</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Gói Premium -->
+                <div class="plan-card rounded-lg shadow-lg p-6 text-center touch-effect">
+                    <h3 class="text-xl font-bold text-pink-400">Premium</h3>
+                    <p class="text-gray-300 text-sm mt-2">Khám phá toàn bộ Starbloom với các đặc quyền độc quyền!</p>
+                    <p class="text-lg font-semibold text-white mt-4">9.99 USD/tháng hoặc 99.99 USD/năm</p>
+                    <ul class="text-gray-300 text-sm mt-4 space-y-2">
+                        <li>Truy cập tất cả vùng đất (Rainbow Realm, Candy Realm, Nebula Realm)</li>
+                        <li>Tăng 50% tài nguyên (tinh thể ánh sáng, kẹo ngọt)</li>
+                        <li>Skin độc quyền: Công chúa ánh sáng, Hiệp sĩ cầu vồng</li>
+                        <li>Thú cưng: Kỳ lân ánh kim, Chim ánh sao</li>
+                        <li>Không quảng cáo</li>
+                        <li>Truy cập sớm nội dung mới</li>
+                    </ul>
+                    <button onclick="selectPlan('premium', 'Gói Premium', 9.99, 99.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Đăng ký ngay</button>
+                </div>
+                <!-- Gói Học sinh/Sinh viên/U23 -->
+                <div class="plan-card rounded-lg shadow-lg p-6 text-center touch-effect">
+                    <h3 class="text-xl font-bold text-pink-400">Học sinh/Sinh viên/U23</h3>
+                    <p class="text-gray-300 text-sm mt-2">Ưu đãi cho người chơi trẻ, truy cập đầy đủ Starbloom!</p>
+                    <p class="text-lg font-semibold text-white mt-4">4.99 USD/tháng hoặc 49.99 USD/năm</p>
+                    <ul class="text-gray-300 text-sm mt-4 space-y-2">
+                        <li>Truy cập tất cả vùng đất và nhiệm vụ</li>
+                        <li>Skin độc quyền: Học viên ánh sáng</li>
+                        <li>Thú cưng: Thỏ sinh viên</li>
+                        <li>Hỗ trợ cộng đồng qua Discord/X</li>
+                        <li>Không quảng cáo</li>
+                        <li>Truy cập sớm nội dung mới</li>
+                    </ul>
+                    <button onclick="selectPlan('student', 'Gói Học sinh/Sinh viên/U23', 4.99, 49.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Đăng ký ngay</button>
+                </div>
+                <!-- Gói Giáo dục -->
+                <div class="plan-card rounded-lg shadow-lg p-6 text-center touch-effect">
+                    <h3 class="text-xl font-bold text-pink-400">Education</h3>
+                    <p class="text-gray-300 text-sm mt-2">Tích hợp học tập vào thế giới Starbloom!</p>
+                    <p class="text-lg font-semibold text-white mt-4">4.99 USD/tháng hoặc 49.99 USD/năm</p>
+                    <ul class="text-gray-300 text-sm mt-4 space-y-2">
+                        <li>Truy cập tất cả vùng đất và nội dung độc quyền</li>
+                        <li>Nhiệm vụ giáo dục: Khoa học, toán, vật lý</li>
+                        <li>Tài liệu hướng dẫn cho giáo viên</li>
+                        <li>Tham gia webinar và diễn đàn học tập</li>
+                        <li>Không quảng cáo</li>
+                    </ul>
+                    <button onclick="selectPlan('education', 'Gói Education', 4.99, 49.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Đăng ký ngay</button>
+                </div>
+                <!-- Gói Nhóm -->
+                <div class="plan-card rounded-lg shadow-lg p-6 text-center touch-effect">
+                    <h3 class="text-xl font-bold text-pink-400">Family-Play</h3>
+                    <p class="text-gray-300 text-sm mt-2">Cùng gia đình khám phá với tối đa 4 người chơi!</p>
+                    <p class="text-lg font-semibold text-white mt-4">12.99 USD/tháng hoặc 129.99 USD/năm</p>
+                    <ul class="text-gray-300 text-sm mt-4 space-y-2">
+                        <li>Truy cập cho 4 người chơi</li>
+                        <li>Tăng 50% tài nguyên</li>
+                        <li>Skin gia đình: Công chúa ánh sáng, Phù thủy kẹo</li>
+                        <li>Thú cưng: Kỳ lân ánh kim, Gấu kẹo</li>
+                        <li>Chế độ co-op và khu vườn gia đình</li>
+                        <li>Không quảng cáo, cập nhật sớm</li>
+                    </ul>
+                    <button onclick="selectPlan('family', 'Gói Family-Play', 12.99, 129.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Đăng ký ngay</button>
+                </div>
+            </div>
+            <p class="text-center text-gray-300 mt-6 text-sm">*Phí chơi chung: 1.2 USD/tháng để tham gia cùng thế giới, xây dựng chung bản đồ với bạn bè hoặc gia đình.</p>
+        </section>
+
+        <!-- Phần Sản phẩm -->
+        <section id="san-pham" class="mb-12">
+            <h2 class="text-3xl font-semibold text-pink-400 text-center mb-6">Sản phẩm chính hãng</h2>
+            <p class="text-base text-gray-300 text-center mb-8">Mang thế giới Starbloom vào đời thực với các sản phẩm độc quyền!</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Sản phẩm 1: Áo Lumi -->
+                <div class="product-card rounded-lg shadow-lg p-4 text-center touch-effect">
+                    <img src="Data/Tshirt.png" alt="Áo DreamCraft" class="w-full h-48 object-cover rounded-md">
+                    <h3 class="text-xl font-bold text-pink-400 mt-4">Áo GreamCraft</h3>
+                    <p class="text-gray-300 text-sm">Áo thun cotton mềm in logo DreamCraft.</p>
+                    <p class="text-lg font-semibold text-white mt-2">24.99 USD</p>
+                    <button onclick="addToCart('Áo DreamCraft', 24.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Thêm vào giỏ</button>
+                </div>
+                <!-- Sản phẩm 2: Thú nhồi bông Kỳ Lân -->
+                <div class="product-card rounded-lg shadow-lg p-4 text-center touch-effect">
+                    <img src="Data/Goi.png" alt="Gối nhồi bông DreamCraft" class="w-full h-48 object-cover rounded-md">
+                    <h3 class="text-xl font-bold text-pink-400 mt-4">Gối bông DreamCraft</h3>
+                    <p class="text-gray-300 text-sm">Chiếc gối bông êm ái từ Vùng đất Cầu Vồng.</p>
+                    <p class="text-lg font-semibold text-white mt-2">29.99 USD</p>
+                    <button onclick="addToCart('Gối bông DreamCraft', 29.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Thêm vào giỏ</button>
+                </div>
+                <!-- Sản phẩm 3: Mô hình Bút Chì Kỳ Diệu -->
+                <div class="product-card rounded-lg shadow-lg p-4 text-center touch-effect">
+                    <img src="Data/Toy.png" alt="Mô hình Bút Chì Kỳ Diệu" class="w-full h-48 object-cover rounded-md">
+                    <h3 class="text-xl font-bold text-pink-400 mt-4">Mô hình Bút Chì Kỳ Diệu</h3>
+                    <p class="text-gray-300 text-sm">Bản sao lấp lánh của Bút Chì Kỳ Diệu của Lumi.</p>
+                    <p class="text-lg font-semibold text-white mt-2">39.99 USD</p>
+                    <button onclick="addToCart('Mô hình Bút Chì Kỳ Diệu', 39.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Thêm vào giỏ</button>
+                </div>
+                <!-- Sản phẩm 4: Thú Bông Bút Chì trong Thế Giới Kẹo Ngọt -->
+                <div class="product-card rounded-lg shadow-lg p-4 text-center touch-effect">
+                    <img src="Data/pecil.png" alt="Nón Kẹo Ngọt" class="w-full h-48 object-cover rounded-md">
+                    <h3 class="text-xl font-bold text-pink-400 mt-4">Nón Candy Realm</h3>
+                    <p class="text-gray-300 text-sm">Gối ôm với họa tiết xoáy kẹo từ Vùng đất Kẹo Ngọt.</p>
+                    <p class="text-lg font-semibold text-white mt-2">19.99 USD</p>
+                    <button onclick="addToCart('Nón Candy Realm', 19.99)" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Thêm vào giỏ</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phần Sự kiện -->
+        <section id="su-kien" class="mb-12">
+            <h2 class="text-3xl font-semibold text-pink-400 text-center mb-6">Sự kiện theo mùa</h2>
+            <p class="text-base text-gray-300 text-center mb-8">Tham gia các sự kiện đặc biệt để nhận phần thưởng độc quyền!</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="product-card rounded-lg shadow-lg p-6 text-center touch-effect relative overflow-hidden">
+                    <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-red-500 to-green-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-2xl"></span>
+                    </div>
+                    <img src="Data/Christmas.png" alt="Sự kiện Giáng sinh" class="w-full h-32 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-bold text-pink-400">Sự kiện Giáng sinh</h3>
+                    <p class="text-gray-300 text-sm mt-2">Khám phá thế giới ảo Giáng sinh, nhận skin "Lumi Ông già Noel" và trang trí cây thông ánh sao.</p>
+                    <p class="text-lg font-semibold text-white mt-2">Miễn phí với gói thành viên</p>
+                    <button onclick="openEventDetail('christmas')" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Tham gia ngay</button>
+                </div>
+                <div class="product-card rounded-lg shadow-lg p-6 text-center touch-effect relative overflow-hidden">
+                    <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-red-600 to-yellow-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-2xl"></span>
+                    </div>
+                    <img src="Data/Tet.png" alt="Sự kiện Tết" class="w-full h-32 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-bold text-pink-400">Sự kiện Tết</h3>
+                    <p class="text-gray-300 text-sm mt-2">Tham gia thi đấu thăng hạng, nhận skin "Lumi Áo dài" và thú cưng "Rồng ánh kim".</p>
+                    <p class="text-lg font-semibold text-white mt-2">Miễn phí với gói thành viên</p>
+                    <button onclick="openEventDetail('tet')" class="mt-4 btn-primary py-2 px-4 rounded touch-effect">Tham gia ngay</button>
+                </div>
+        </section>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Giỏ hàng</h3>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="cart-items" class="space-y-4 mb-6">
+                <!-- Cart items will be inserted here -->
+            </div>
+            
+            <div class="border-t border-gray-600 pt-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-white font-semibold">Tổng cộng:</span>
+                    <span id="cart-total" class="text-pink-400 font-bold text-lg">$0.00</span>
+                </div>
+                <button id="checkout-btn" onclick="proceedToCheckout()" class="w-full btn-primary py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Thanh toán
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <div id="floating-cart" class="floating-cart" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <div id="floating-cart-count" class="floating-cart-badge" style="display: none;">0</div>
+    </div>
+
+    <!-- Chân trang -->
+    <footer class="bg-gray-900 py-6 text-center text-gray-300">
+        <p>&copy; 2025 DreamCraft. Mọi quyền được bảo lưu.</p>
+        <p class="mt-2">Theo dõi chúng tôi trên <a href="https://x.com" class="text-pink-400 hover:underline">X</a> | <a href="https://discord.com" class="text-pink-400 hover:underline">Discord</a></p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        let cart = [];
+
+        function addToCart(itemName, price) {
+            const existingItem = cart.find(item => item.name === itemName);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name: itemName,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            updateCartDisplay();
+            showCartNotification(itemName);
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cart-count');
+            const floatingCartCount = document.getElementById('floating-cart-count');
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.classList.remove('hidden');
+                floatingCartCount.textContent = totalItems;
+                floatingCartCount.style.display = 'flex';
+                checkoutBtn.disabled = false;
+            } else {
+                cartCount.classList.add('hidden');
+                floatingCartCount.style.display = 'none';
+                checkoutBtn.disabled = true;
+            }
+            
+            cartTotal.textContent = `$${totalPrice.toFixed(2)}`;
+            
+            cartItems.innerHTML = '';
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item rounded-lg p-4 flex justify-between items-center';
+                cartItem.innerHTML = `
+                    <div class="flex-1">
+                        <h4 class="text-white font-semibold">${item.name}</h4>
+                        <p class="text-gray-300 text-sm">$${item.price} x ${item.quantity}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateItemQuantity(${index}, -1)" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="text-white font-semibold">${item.quantity}</span>
+                        <button onclick="updateItemQuantity(${index}, 1)" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button onclick="removeFromCart(${index})" class="text-red-400 hover:text-red-600 ml-2">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+        }
+
+        function updateItemQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartDisplay();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            const cartOverlay = document.getElementById('cart-overlay');
+            
+            cartSidebar.classList.toggle('open');
+            cartOverlay.classList.toggle('show');
+        }
+
+        function showCartNotification(itemName) {
+            // Simple notification (you can enhance this)
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg z-50 transition-all duration-300';
+            notification.textContent = `Đã thêm "${itemName}" vào giỏ hàng!`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 2000);
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) return;
+            
+            // Save cart to localStorage
+            localStorage.setItem('shoppingCart', JSON.stringify(cart));
+            
+            // Redirect to shipping form
+            window.location.href = 'shipping.html';
+        }
+
+        function selectPlan(planId, planName, monthlyPrice, yearlyPrice) {
+            // Lưu thông tin gói vào localStorage
+            const planData = {
+                id: planId,
+                name: planName,
+                monthlyPrice: monthlyPrice,
+                yearlyPrice: yearlyPrice
+            };
+            localStorage.setItem('selectedPlan', JSON.stringify(planData));
+            
+            // Chuyển đến trang thanh toán
+            window.location.href = 'checkout.html';
+        }
+
+        function showLoginModal() {
+            // Chuyển đến trang thanh toán với gói mặc định
+            const defaultPlan = {
+                id: 'premium',
+                name: 'Gói Premium',
+                monthlyPrice: 9.99,
+                yearlyPrice: 99.99
+            };
+            localStorage.setItem('selectedPlan', JSON.stringify(defaultPlan));
+            window.location.href = 'checkout.html';
+        }
+
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+
+        function openEventDetail(eventId) {
+            window.location.href = `event-${eventId}.html`;
+        }
+
+        // Initialize cart display
+        updateCartDisplay();
+    </script>
+</body>
+</html>

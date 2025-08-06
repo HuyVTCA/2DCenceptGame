@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự kiện Tết - DreamCraft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.3) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 80%, rgba(255, 77, 148, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 60%, rgba(44, 44, 44, 0.4) 0%, transparent 50%);
+            animation: backgroundMove 15s ease-in-out infinite;
+            z-index: -1;
+        }
+        @keyframes backgroundMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-20px, -20px) scale(1.1); }
+            50% { transform: translate(20px, 20px) scale(0.9); }
+            75% { transform: translate(-10px, 10px) scale(1.05); }
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 50%, #1a1a1a 100%);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .header-bg::before {
+            content: '🐉🧧🏮🎆🌸🎊';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 3rem;
+            opacity: 0.1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .event-card, .task-card {
+            background: rgba(44, 44, 44, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 77, 148, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .event-card::before, .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 77, 148, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .event-card:hover::before, .task-card:hover::before {
+            left: 100%;
+        }
+        .event-card:hover, .task-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(255, 77, 148, 0.2);
+            border-color: rgba(255, 77, 148, 0.3);
+        }
+        .event-card img {
+            width: 100%;
+            height: 150px; /* Giảm chiều cao để hiển thị toàn bộ hình ảnh */
+            object-fit: contain; /* Đảm bảo hình ảnh hiển thị đầy đủ, không bị cắt */
+            background: #1a1a1a; /* Nền tối để hình ảnh nổi bật */
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ff4d94, #e03e82);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #e03e82;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 77, 148, 0.3);
+        }
+        .btn-login {
+            background: #4b0082;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover {
+            background: #3a0066;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 0, 130, 0.4);
+        }
+        .logo-placeholder {
+            max-width: 200px;
+            height: auto;
+        }
+        .nav-menu {
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .nav-menu a {
+            font-size: 1.1rem;
+            font-weight: 600;
+            position: relative;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .nav-menu a:hover {
+            background: rgba(255, 77, 148, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #ff4d94;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-menu a:hover::after {
+            width: 80%;
+        }
+        .touch-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .touch-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 77, 148, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .touch-effect:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        .blink {
+            animation: blink 1.5s infinite;
+            color: #ff4d94;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 77, 148, 0.8);
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .tet-special {
+            background: linear-gradient(135deg, #d4af37, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        .dragon-effect {
+            animation: dragonFloat 4s ease-in-out infinite;
+        }
+        @keyframes dragonFloat {
+            0%, 100% { transform: translateX(0px) rotate(0deg); }
+            25% { transform: translateX(10px) rotate(2deg); }
+            50% { transform: translateX(-5px) rotate(-1deg); }
+            75% { transform: translateX(15px) rotate(3deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Thanh điều hướng -->
+    <nav class="nav-menu fixed top-0 w-full py-4 px-6 flex justify-between items-center shadow-lg z-50">
+        <div class="flex items-center">
+            <img src="Data/logo.png" alt="Logo DreamCraft" class="logo-placeholder h-12 w-auto">
+        </div>
+        <div class="flex space-x-6">
+            <a href="index.html#goi-thanh-vien" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">Gói thành viên</a>
+            <a href="index.html#san-pham" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">Sản phẩm</a>
+            <a href="index.html#su-kien" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">Sự kiện</a>
+        </div>
+        <div class="flex items-center space-x-4">
+            <a href="index.html" class="text-pink-400 hover:text-pink-600 transition-colors duration-300 touch-effect">
+                <i class="fas fa-home text-xl"></i>
+            </a>
+            <div class="relative">
+                <button onclick="goToProfile()" class="touch-effect">
+                    <img src="Data/avatar.png" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-pink-400 hover:border-pink-600 transition-colors duration-300" onerror="this.src='https://via.placeholder.com/40x40/ff4d94/ffffff?text=U'">
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tiêu đề -->
+    <header class="header-bg pt-24 pb-12 text-center">
+        <h1 class="text-4xl font-bold drop-shadow-lg">🐉 Sự kiện Tết Nguyên Đán Starbloom 🧧</h1>
+        <p class="mt-2 text-lg text-gray-300">Chào đón năm mới với những phép màu từ DreamCraft!</p>
+    </header>
+
+    <!-- Nội dung chính -->
+    <main class="container mx-auto py-8 px-4 flex-grow">
+        <!-- Giới thiệu sự kiện -->
+        <section class="mb-12 text-center">
+            <h2 class="text-3xl font-semibold text-pink-400 mb-6">Chào mừng Tết tại Starbloom!</h2>
+            <p class="text-base text-gray-300 max-w-3xl mx-auto">
+                Chào đón năm mới trong <strong>Vùng đất Hoa Đào</strong>, một không gian ảo rực rỡ của <strong>Starbloom</strong>, nơi hoa đào nở rộ và đèn lồng ánh kim tỏa sáng khắp bầu trời. Trong sự kiện Tết của <strong>DreamCraft</strong>, bạn sẽ cùng <strong>Lumi</strong> tham gia các nhiệm vụ năm mới để trang trí <strong>Cây đào ánh kim</strong>, giải cứu <strong>Rồng ánh kim</strong> khỏi mê cung bóng tối, và lan tỏa niềm vui Tết khắp vương quốc. Nhận ngay các phần thưởng độc quyền như skin <strong class="tet-special">“Lumi Áo dài”</strong>, thú cưng <strong class="tet-special">“Rồng ánh kim”</strong>, và công trình <strong class="tet-special">“Cổng chào Tết”</strong>. Sự kiện miễn phí cho người chơi sở hữu gói <strong>Premium</strong>, <strong>Học sinh/Sinh viên/U23</strong>, <strong>Education</strong>, hoặc <strong>Family-Play</strong>. Đặc biệt, chỉ với <span class="blink">phí chơi chung 1.2 USD/tháng</span>, bạn có thể cùng bạn bè xây dựng những kỷ niệm Tết đáng nhớ trong một thế giới chung!
+            </p>
+            <p class="text-sm text-gray-400 mt-4">Thời gian: 15/1/2026 - 15/2/2026</p>
+        </section>
+
+        <!-- Nhiệm vụ sự kiện -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold text-pink-400 text-center mb-6">Nhiệm vụ Tết</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="task-card rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-pink-400">Trang trí Cây đào ánh kim</h3>
+                    <p class="text-gray-300 text-sm mt-2">Thu thập <strong>Phao hoa đào</strong> trong <strong>Vùng đất Hoa Đào</strong> để trang trí <strong>Cây đào ánh kim</strong>. Sử dụng <strong>Bút Chì Kỳ Diệu</strong> để tạo đèn lồng ánh kim và dây hoa lấp lánh. Hoàn thành để mở khóa skin công trình <strong class="tet-special">Cây đào ánh kim</strong>.</p>
+                </div>
+                <div class="task-card rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-pink-400">Giải cứu Rồng ánh kim</h3>
+                    <p class="text-gray-300 text-sm mt-2">Tìm <strong>Rồng ánh kim</strong> bị mắc kẹt trong mê cung bóng tối. Giải câu đố ánh sáng bằng cách xếp <strong>Phao hoa đào</strong> đúng vị trí để mở đường. Nhận thú cưng <strong class="tet-special">Rồng ánh kim</strong> khi hoàn thành.</p>
+                </div>
+                <div class="task-card rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-pink-400">Xây dựng Làng Tết ánh kim</h3>
+                    <p class="text-gray-300 text-sm mt-2">Hợp tác với bạn bè để xây dựng <strong>Làng Tết ánh kim</strong>. Đóng góp <strong>Phao hoa đào</strong> và gỗ phát sáng để tạo cổng chào, nhà Tết, và chợ hoa. Yêu cầu <span class="blink">phí chơi chung 1.2 USD/tháng</span> để tham gia xây dựng bản đồ chung.</p>
+                </div>
+                <div class="task-card rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-pink-400">Thi đấu thăng hạng Pháo hoa</h3>
+                    <p class="text-gray-300 text-sm mt-2">Tham gia <strong>Thi đấu thăng hạng Pháo hoa</strong> trong <strong>Vùng đất Hoa Đào</strong>. Tạo pháo hoa từ <strong>Phao hoa đào</strong> và tinh thể ánh sáng, vượt qua thử thách để giành skin <strong class="tet-special">“Lumi Áo dài”</strong>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phần thưởng sự kiện -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold text-pink-400 text-center mb-6">Phần thưởng độc quyền</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="event-card rounded-lg shadow-lg p-4 text-center">
+                    <img src="Data/aodai.png" alt="Skin Lumi Áo dài" class="w-full h-150 object-contain rounded-md" onerror="this.src='https://via.placeholder.com/200x150/2c2c2c/ffffff?text=Skin+Lumi+Áo+dài'">
+                    <h3 class="text-lg font-bold text-pink-400 mt-3">👘 Skin Lumi Áo dài</h3>
+                    <p class="text-gray-300 text-xs">Lumi trong trang phục áo dài truyền thống với hoa văn ánh kim rực rỡ.</p>
+                    <div class="mt-2 text-yellow-400 text-xs">
+                        <i class="fas fa-trophy mr-1"></i>Thắng Giải đấu Rồng Vàng
+                    </div>
+                    <button onclick="joinEvent()" class="mt-3 btn-primary py-1 px-3 rounded text-sm touch-effect">Tham gia để nhận</button>
+                </div>
+                <div class="event-card rounded-lg shadow-lg p-4 text-center dragon-effect">
+                    <img src="Data/rongtet.png" alt="Rồng ánh kim" class="w-full h-150 object-contain rounded-md" onerror="this.src='https://via.placeholder.com/200x150/2c2c2c/ffffff?text=Rồng+ánh+kim'">
+                    <h3 class="text-lg font-bold text-pink-400 mt-3">🐉 Thú cưng Rồng ánh kim</h3>
+                    <p class="text-gray-300 text-xs">Rồng vàng uy mãnh với khả năng bay và thổi lửa ánh kim trong Starbloom.</p>
+                    <div class="mt-2 text-yellow-400 text-xs">
+                        <i class="fas fa-star mr-1"></i>Hoàn thành Lễ hội pháo hoa
+                    </div>
+                    <button onclick="joinEvent()" class="mt-3 btn-primary py-1 px-3 rounded text-sm touch-effect">Tham gia để nhận</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hướng dẫn tham gia -->
+        <section class="mb-12 text-center">
+            <h2 class="text-3xl font-semibold text-pink-400 mb-6">Cách tham gia</h2>
+            <p class="text-base text-gray-300 max-w-3xl mx-auto">
+                Để tham gia sự kiện Tết, bạn cần sở hữu gói <strong>Premium</strong> (9.99 USD/tháng), <strong>Học sinh/Sinh viên/U23</strong> (4.99 USD/tháng), <strong>Education</strong> (4.99 USD/tháng), hoặc <strong>Family-Play</strong> (12.99 USD/tháng). Đăng nhập vào <strong>DreamCraft</strong>, vào mục Sự kiện, và bắt đầu các nhiệm vụ Tết để mở khóa phần thưởng. Muốn xây dựng <strong>Làng Tết ánh kim</strong> cùng bạn bè? Chỉ cần <span class="blink">phí chơi chung 1.2 USD/tháng</span> để tham gia thế giới chung, cùng nhau tạo nên những kỷ niệm năm mới đáng nhớ trong <strong>Vùng đất Hoa Đào</strong>!
+            </p>
+            <button onclick="joinEvent()" class="mt-6 btn-primary py-3 px-6 rounded text-lg touch-effect">🐉 Tham gia ngay</button>
+        </section>
+    </main>
+
+    <!-- Chân trang -->
+    <footer class="bg-gray-900 py-6 text-center text-gray-300">
+        <p>&copy; 2025 DreamCraft. Mọi quyền được bảo lưu.</p>
+        <p class="mt-2">Theo dõi chúng tôi trên <a href="https://x.com" class="text-pink-400 hover:underline">X</a> | <a href="https://discord.com" class="text-pink-400 hover:underline">Discord</a></p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function joinEvent() {
+            const planData = localStorage.getItem('selectedPlan');
+            if (!planData) {
+                showNotification('🎮 Bạn cần gói thành viên để tham gia sự kiện!', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html#goi-thanh-vien';
+                }, 2000);
+                return;
+            }
+            showNotification('🐉 Chào mừng bạn đến với Sự kiện Tết Nguyên Đán!');
+            setTimeout(() => {
+                showNotification('🧧 Bạn đã nhận 888 Vàng may mắn khởi đầu!');
+                setTimeout(() => {
+                    showNotification('🎯 Nhiệm vụ đầu tiên: Săn 10 lì xì ánh sao trong Vùng đất Hoa Đào!');
+                }, 1500);
+            }, 1500);
+        }
+
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg text-white font-semibold shadow-lg transition-all duration-300 transform translate-x-full`;
+            if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #d4af37, #ffed4e)';
+                notification.style.color = '#1a1a1a';
+            }
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'dragon'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.innerHTML = '🎆';
+            firework.style.position = 'fixed';
+            firework.style.top = Math.random() * window.innerHeight + 'px';
+            firework.style.left = Math.random() * window.innerWidth + 'px';
+            firework.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            firework.style.zIndex = '1';
+            firework.style.pointerEvents = 'none';
+            firework.style.animation = `explode ${Math.random() * 2 + 1}s ease-out forwards`;
+            document.body.appendChild(firework);
+            setTimeout(() => {
+                if (document.body.contains(firework)) {
+                    document.body.removeChild(firework);
+                }
+            }, 3000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes explode {
+                0% { transform: scale(0) rotate(0deg); opacity: 1; }
+                50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+                100% { transform: scale(2) rotate(360deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        setInterval(createFirework, 2000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                showNotification('🐉 Chúc mừng năm mới! Chào mừng đến với Sự kiện Tết DreamCraft!');
+            }, 1000);
+        });
+
+        function showLoginModal() {
+            joinEvent();
+        }
+    </script>
+</body>
+</html>
